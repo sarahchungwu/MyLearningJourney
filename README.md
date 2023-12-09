@@ -5,7 +5,7 @@
 This repository contains my personal learning notes for TypeScript, Node.js, and C#.
 
 ## Table of Contents
-- [TypeScript](/TypeScript/)
+- [TypeScript](/typescript/)
 - [Node.js](/Node.js/)
 - [C#](/C#/)
 
