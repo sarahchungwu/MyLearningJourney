@@ -70,7 +70,7 @@ let float: number = 3.14;
 <details>
   <summary>Strings</summary>
 
-  ##Strings
+  ## Strings
 > String values in TypeScript are similar to JavaScript and are defined using the string type.
 
 ```typescript
@@ -81,7 +81,7 @@ let greeting: string = "Hello, TypeScript!";
 <details>
   <summary>Booleans</summary>
 
-  ##Booleans
+  ## Booleans
 Boolean values are simple true/false values in TypeScript, denoted by the boolean type.
 
 ```typescript
@@ -147,5 +147,44 @@ With type inference, you don't need to explicitly specify types, making your cod
 >In summary, type assignment  involves explicitly specifying data types, providing clarity and early error checking. Type inference, on the other hand, lets TypeScript automatically deduce types based on context, reducing the need for explicit type annotations and improving code conciseness. Both mechanisms work together to enhance TypeScript's strong typing capabilities.
 
 
+## Object Types 
 
----
+In TypeScript, **object types** are used to define and work with complex data structures, which can represent objects with multiple properties and their respective data types. Object types play a crucial role in making your TypeScript code more structured and maintainable.
+
+<details>
+ <summary> Defining Object Types </summary>
+
+You can define object types by specifying the properties and their corresponding data types within curly braces `{}`. Here's an example:
+
+```typescript
+// Define an object type for a person
+type Person = {
+  name: string;
+  age: number;
+  isStudent: boolean;
+};
+```
+</details>
+
+<details>
+ <summary> Creating Objects with Object Types</summary>
+
+Once you've defined an object type, you can create objects that conform to that type. Here's how you can do it:
+
+```typescript
+// Create objects of the 'Person' type
+let alice: Person = {
+  name: "Alice",
+  age: 25,
+  isStudent: false
+};
+
+let bob: Person = {
+  name: "Bob",
+  age: 30,
+  isStudent: true
+};
+
+```
+</details>
+
