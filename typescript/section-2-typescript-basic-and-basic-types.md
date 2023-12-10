@@ -51,8 +51,7 @@ In summary, TypeScript enhances JavaScript with types and provides better toolin
 </details>
 
 
----
----
+
 
 ## Working with Numbers, Strings & Booleans
 TypeScript enhances JavaScript's basic types - numbers, strings, and booleans - with static typing. Here's a brief overview of how these types are used in TypeScript.
@@ -60,7 +59,7 @@ TypeScript enhances JavaScript's basic types - numbers, strings, and booleans - 
   <summary>Numbers</summary>
 
   ## Numbers
-In TypeScript, numbers can be of type `number`. This includes both integers and floating-point numbers.
+> In TypeScript, numbers can be of type `number`. This includes both integers and floating-point numbers.
 
 ```typescript
 let integer: number = 6;
@@ -72,7 +71,7 @@ let float: number = 3.14;
   <summary>Strings</summary>
 
   ##Strings
-String values in TypeScript are similar to JavaScript and are defined using the string type.
+> String values in TypeScript are similar to JavaScript and are defined using the string type.
 
 ```typescript
 let greeting: string = "Hello, TypeScript!";
@@ -90,20 +89,12 @@ let isComplete: boolean = false;
 ```
 </details>
 
-### Type Inference
-TypeScript is also capable of inferring these types if you assign a value at declaration.
-```typescript
-let inferredNumber = 5; // number
-let inferredString = "Inferred String"; // string
-let inferredBoolean = true; // boolean
 
-```
----
----
+
 
 ## Type Assignment and Type Inference in TypeScript
 
-In TypeScript, you have two fundamental ways to specify data types for variables, function parameters, and return values: **Type Assignment** and **Type Inference**.
+> In TypeScript, you have two fundamental ways to specify data types for variables, function parameters, and return values: **Type Assignment** and **Type Inference**.
 
 ### Type Assignment
 
@@ -150,11 +141,11 @@ function multiply(x: number, y: number) {
 With type inference, you don't need to explicitly specify types, making your code more concise while still maintaining type safety. TypeScript automatically deduces types based on context, which is especially helpful when dealing with complex data structures and function return values.
 </details>
 
----
 
 
-In summary, type assignment  involves explicitly specifying data types, providing clarity and early error checking. Type inference, on the other hand, lets TypeScript automatically deduce types based on context, reducing the need for explicit type annotations and improving code conciseness. Both mechanisms work together to enhance TypeScript's strong typing capabilities.
+
+>In summary, type assignment  involves explicitly specifying data types, providing clarity and early error checking. Type inference, on the other hand, lets TypeScript automatically deduce types based on context, reducing the need for explicit type annotations and improving code conciseness. Both mechanisms work together to enhance TypeScript's strong typing capabilities.
 
 
---- 
+
 ---
