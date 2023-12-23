@@ -463,4 +463,83 @@ This command will create the necessary configuration files for Prisma, including
 This command will also create a Prisma schema file where you can define your database schema.
 </details>
 
+<details>
+<summary>2.7 Defining User and Bookmark Models with Prisma</summary>
 
+  ### 2.7 Defining User and Bookmark Models with Prisma<
+
+  In this section, we'll define the Prisma schema for the User and Bookmark models in the `schema.prisma` file.
+
+  ```prisma
+  // This is your Prisma schema file,
+  // learn more about it in the docs: [Prisma Schema Docs](https://pris.ly/d/prisma-schema)
+
+  generator client {
+    provider = "prisma-client-js"
+  }
+
+  datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+  }
+
+  model User {
+    id        Int       @id @default(autoincrement())
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    email     String    @unique
+    hash      String
+
+    firstName String?
+    lastName  String?
+    
+    bookmarks Bookmark[]
+    @@map("users")
+  }
+
+  model Bookmark {
+    id          Int       @id @default(autoincrement())
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+    title       String
+    description String?
+    link        String
+
+    userId      Int
+    user        User      @relation(fields: [userId], references: [id])
+
+    @@map("bookmarks")
+  }
+
+  ```
+  Before we proceed, let's explore some helpful Prisma commands:
+  ```bash
+  npx prisma --help
+
+  ```
+  This command provides a list of commands and options available in Prisma.
+
+  Next, let's run the following command to create an initial migration:
+
+  ```bash
+  npx prisma migrate dev
+  ```
+  When prompted for the name of the migration, you can simply type `init`.
+
+  This sets up the initial database migration for your Prisma schema.
+
+  Then, we will run the following command to generates prisma client code
+   ```bash
+  npx prisma generate
+  ```
+  This command generates Prisma client code based on your schema. It creates TypeScript files that allow you to interact with your database using Prisma's strongly typed queries.
+
+  Now, let's clarify the difference between `npx prisma migrate dev` and `npx prisma generate:`
+
+  `npx prisma migrate dev`: This command is used for database migrations. It helps you manage changes to your database schema over time, allowing you to evolve your database structure.
+
+  `npx prisma generate:` This command generates Prisma client code. Prisma client is a type-safe database client that provides a convenient way to interact with your database. It's used for querying and manipulating data in your database.
+
+  >Both commands serve different purposes: one is for database schema evolution (migrations), and the other is for generating code to interact with your database (Prisma client).
+
+</details>
