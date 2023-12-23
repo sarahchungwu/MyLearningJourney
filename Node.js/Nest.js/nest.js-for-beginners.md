@@ -166,8 +166,205 @@ In Nest.js, modules and decorators are closely related and work together to prov
 
 - **Dependency Injection**: The decorators in Nest.js, particularly within modules, facilitate dependency injection. This allows for loosely coupled design, enhancing modularity and maintainability of the application.
 
+</details>
+</details>
+
+
+
+## Section 2: Project Development
+
+In this section, we will explore the key commands and tools that you'll use for developing your Nest.js project.
+
+<details>
+  <summary>2.1. Starting the Development Server</summary>
+
+### 2.1. Starting the Development Server
+
+To kickstart your project development, you'll need to start the development server. The following command will be your go-to:
+
+```bash
+npm run start:dev
+```
+
+Running `npm run start:dev` will launch your Nest.js application in development mode, enabling features like hot-reloading for rapid development. This command is crucial for a smooth development workflow.
 
 </details>
+
+
+<details>
+  <summary>2.2. Generating Modules with Nest CLI</summary>
+
+### 2.2. Generating Modules with Nest CLI
+
+[Nest CLI](https://docs.nestjs.com/cli/overview) (Command Line Interface) is a powerful tool for scaffolding various parts of your Nest.js application. One of the fundamental tasks in building your application is creating modules.
+
+To generate a module, use the following Nest CLI command:
+
+```bash
+nest g module user
+```
+This command creates a new module named "user" with all the necessary files and boilerplate code. Modules are a fundamental concept in Nest.js for organizing your application into logical units, and this command helps you get started quickly.
+
+### We will using `nest g module user` &  `nest g module bookmark` to create user and bookmark module
+
+</details>
+
+<details>
+  <summary>2.3 Application Module -AppModule </summary>
+
+### 2.3 Application Module (`AppModule`)
+
+The `AppModule` is the main module of your Nest.js application. It defines the modules that your application depends on.
+
+```typescript
+import { Module } from '@nestjs/common';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { BookmarkModule } from './bookmark/bookmark.module';
+import { PrismaModule } from './prisma/prisma.module';
+
+@Module({
+  imports: [AuthModule, UserModule, BookmarkModule, PrismaModule],
+})
+export class AppModule {}
+```
+**2.3.1 Auth Module (AuthModule)**
+The AuthModule provides authentication-related features for your application.
+
+**2.3.2 User Module (UserModule)**
+The UserModule is responsible for managing user-related functionalities.
+
+**2.3.3 Bookmark Module (BookmarkModule)**
+The BookmarkModule handles bookmark-related operations in your application.
+
+</details>
+
+<details>
+<summary>2.4 Auth Module</summary>
+
+### 2.4 Auth Module
+
+<details>
+  <summary>The concept of Dependency Injection  </summary>
+
+  ## What is Dependency Injection?
+
+Dependency Injection (DI) is a design pattern used in software development to achieve Inversion of Control (IoC) between classes and their dependencies. Here's a simple way to understand it:
+
+Imagine you're building a robot. Instead of hard-wiring all its parts, you design it so that you can plug in different components (like a battery, sensors, etc.). This makes your robot flexible and easier to upgrade or repair.
+
+In programming, DI allows you to "inject" objects into a class, rather than having the class create the object itself. This makes your code more modular, testable, and maintainable.
+
+### How Dependency Injection Works in Nest.js:
+
+**Providers**: In Nest.js, services (also known as providers) are often the dependencies that get injected. These are classes annotated with the `@Injectable()` decorator.
+
+**Injecting Providers**: When a class (like a controller) needs a service, Nest.js injects an instance of the service into the class. The controller doesn't need to know where the service comes from or how it's created.
+
+**Modules and Providers**: The `@Module()` decorator is used to organize providers. It tells Nest.js which providers are available for injection and how they should be scoped.
+
+### Example:
+
+Here's a basic example of how dependency injection works in Nest.js:
+
+```typescript
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class YourService {
+  doSomething(): string {
+    return "Doing something!";
+  }
+}
+
+import { Controller, Get } from '@nestjs/common';
+import { YourService } from './your.service';
+
+@Controller()
+export class YourController {
+  constructor(private yourService: YourService) {}
+
+  @Get()
+  getSomething(): string {
+    return this.yourService.doSomething();
+  }
+}
+```
+### In this example:
+
+- `YourService` is a provider (service).
+- `YourController` is a consumer of `YourService`.
+- Nest.js automatically injects an instance of `YourService` into `YourController` through the constructor. The controller can then use the service's methods.
+
+### Benefits of Dependency Injection:
+
+- **Loose Coupling**: Your classes don't depend on specific implementations of their dependencies, making them more flexible.
+
+- **Easier Testing**: You can easily replace real services with mock objects in tests.
+
+- **Modularity**: It encourages a modular structure, where different parts of your application can be developed and maintained independently.
+
+
+</details>
+
+### AuthService
+
+```typescript
+ import { Injectable } from '@nestjs/common';
+
+
+@Injectable()
+export class AuthService {
+ signup(){
+  return {msg: 'I have signed up'}
+ }
+
+ signin(){
+  return {msg: 'I have signed in'}
+ }
+
+}
+
+```
+
+### AuthController
+
+```typescript
+import { Controller, Post } from '@nestjs/common';
+import { AuthService } from './auth.service';
+
+@Controller('auth')
+export class AuthController {
+  constructor(private authService: AuthService) {}
+
+  @Post('signup')
+  signup() {
+    return this.authService.signup();
+  }
+
+  @Post('signin')
+  signin() {
+    return this.authService.signin();
+  }
+}
+
+```
+
+### AuthModule
+
+```typescript
+import { Module } from '@nestjs/common';
+import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
+
+@Module({
+  controllers: [AuthController],
+  providers: [AuthService],
+})
+export class AuthModule {}
+
+
+```
 
 
 </details>
