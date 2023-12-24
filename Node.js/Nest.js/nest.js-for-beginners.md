@@ -543,3 +543,98 @@ This command will also create a Prisma schema file where you can define your dat
   >Both commands serve different purposes: one is for database schema evolution (migrations), and the other is for generating code to interact with your database (Prisma client).
 
 </details>
+
+<details>
+  <summary> 2.8 Setting Up the Prisma Module</summary>
+
+  ### 2.8 Setting Up the Prisma Module
+
+  In this section, we'll create and configure the Prisma module for our Nest.js application. The Prisma module is essential for connecting and interacting with our database.
+
+  #### Create the Prisma Module
+
+  To create the Prisma module, run the following command:
+
+  - create the service file
+  ```bash
+  nest g service prisma --no-spec
+  ```
+  Create the Prisma Service
+Next, let's generate the Prisma service, which will provide database access functionality to our application. Use the following command:
+  ```bash
+  nest g service prisma --no-spec
+  ```
+This command generates the Prisma service without generating test specifications, keeping our focus on setting up the module and service quickly.
+
+>we'll create a `PrismaService` that allows your Nest.js application to interact with the PostgreSQL database using Prisma.
+
+  First, let's take a look at the code for the `PrismaService`:
+
+
+```typescript
+import { Injectable } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
+
+@Injectable()
+export class PrismaService extends PrismaClient {
+  constructor() {
+    super({
+      // Configure the Prisma client to connect to your PostgreSQL database
+      datasources: {
+        db: {
+          url: 'postgresql://postgres:123@localhost:5434/nest?schema=public',
+          // Replace this URL with your actual database connection information
+        },
+      },
+    });
+  }
+}
+```
+**Code Breakdown:**
+
+- We create an `Injectable` service called `PrismaService` that extends `PrismaClient` from the `@prisma/client` package. This allows us to use Prisma to interact with the database.
+
+- In the constructor, we configure the Prisma client to connect to your PostgreSQL database. You should replace the `url` property with your actual database connection information.
+
+**Purpose of the PrismaService:**
+
+- The `PrismaService` acts as a central hub for all database-related operations in your Nest.js application. It provides a convenient way to interact with your database using Prisma's strongly typed queries.
+
+- By extending `PrismaClient`, you gain access to various methods and properties that allow you to perform database operations efficiently.
+
+- This service will be used throughout your application to perform CRUD (Create, Read, Update, Delete) operations on your database tables.
+
+With the `PrismaService` set up, you're ready to start building the functionality of your Nest.js application that interacts with the database.
+
+- For the Prisma module
+  ```typescript
+  import { Global, Module } from '@nestjs/common';
+  import { PrismaService } from './prisma.service';
+
+  @Global()
+  @Module({
+  providers: [PrismaService],
+  exports: [PrismaService],
+  })
+  export class PrismaModule {}
+  ```
+>With the Prisma module and service set up, you'll have a centralized way to interact with your PostgreSQL database using Prisma's powerful features. This lays the foundation for performing database operations, such as creating, reading, updating, and deleting records, in a structured and efficient manner.
+
+## Integrating Auth Module with Prisma Module
+
+The Auth module in our Nest.js application is tightly integrated with the Prisma module, allowing seamless database operations and user management. Here's how it works:
+
+1. **Import PrismaModule:** In the Auth module, we import the `PrismaModule` to gain access to Prisma's database functionality. This integration enables us to interact with the database effortlessly within our authentication logic.
+
+```typescript
+@Module({
+  imports: [PrismaModule],
+  controllers: [AuthController],
+  providers: [AuthService],
+})
+```
+</details>
+
+<details>
+<summary>2.9 </summary>
+</details>
