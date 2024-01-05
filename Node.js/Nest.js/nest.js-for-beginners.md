@@ -461,6 +461,8 @@ npx prisma init
 This command will create the necessary configuration files for Prisma, including the `.env` file with default values. You can then customize the`.env` file variables to match your Docker configuration as needed
 
 This command will also create a Prisma schema file where you can define your database schema.
+
+>Whenever you make changes to the Prisma schema, it's important to run the following command to apply those changes to the database: `npx prisma migrate dev`.
 </details>
 
 <details>
@@ -636,5 +638,244 @@ The Auth module in our Nest.js application is tightly integrated with the Prisma
 </details>
 
 <details>
-<summary>2.9 </summary>
+<summary>2.9 Using the auth dto</summary>
+
+### 2.9 Using the auth dto
+
+<details>
+<summary>The concept of DTO(Data Transfer Object)</summary>
+
+### Concept of DTO (Data Transfer Object)
+
+1. **General Idea**:
+   - A DTO is a pattern used to transfer data between software application subsystems. It's essentially a container for data with a defined structure.
+   - DTOs are used to encapsulate data and define its format, making data easier to handle, especially when moving between layers (like from the client to the server or between services).
+
+2. **Advantages**:
+   - **Structure**: DTOs give a clear structure to the data being passed around.
+   - **Type Safety**: In TypeScript, DTOs can enforce types for each property, enhancing code reliability.
+   - **Simplification**: They can simplify complex data structures, making them more manageable.
+   - **Separation of Concerns**: DTOs help in separating external data presentation from internal data processing.
+
+### Difference When Not Using DTOs
+
+1. **Without DTOs**:
+   - You directly handle raw data objects, which might not have a well-defined structure.
+   - This can lead to more checks and validations scattered throughout your code, making it less organized.
+   - The lack of structure might increase the risk of handling data incorrectly or missing important validations.
+
+2. **Using Validation Libraries (like Zod)**:
+   - Libraries like Zod are used for validating data structures. They ensure that the data you receive matches the expected format.
+   - Zod focuses on validation, while DTOs focus on data structure and transfer. However, DTOs in TypeScript can also include validation logic (like using `class-validator` in NestJS).
+
+### DTOs in NestJS
+
+1. **Not Compulsory, But Recommended**:
+   - Using DTOs in NestJS is not compulsory, but it's a recommended practice.
+   - NestJS is designed to work well with DTOs, leveraging TypeScript's type system and decorators.
+
+2. **Benefits in NestJS**:
+   - DTOs provide a clear contract for what data a request should contain.
+   - They help in automatically handling validation and transformation of incoming data.
+   - DTOs enhance maintainability and clarity of your code, making it more aligned with NestJS’s architecture.
+
+### Example Comparison
+
+- **With DTO in NestJS**: You define a class with specific properties and types. When a request comes in, NestJS uses this DTO to ensure the request data matches the expected structure.
+- **With Zod in Express.js**: You define a Zod schema for the expected data. When a request is received, you manually validate the request data against this schema.
+
+### Summary
+
+- DTOs are a structural pattern, beneficial for defining the shape and potentially the validation rules of data being transferred.
+- They are not mandatory but highly recommended in NestJS due to the framework's design and TypeScript integration.
+- Using DTOs leads to cleaner, more maintainable code and aligns well with NestJS's philosophy of structured, modular development. In contrast, while libraries like Zod focus on validation, they don't inherently provide the same level of structural organization as DTOs.
+</details>
+
+### Creating the Auth DTO (Data Transfer Object)
+In the Auth module, you'll create a DTO file named auth.dto.ts. This DTO will define the structure of data used for authentication.
+
+
+```typescript
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+
+export interface AuthDto {
+  email: string;
+  password: string;
+}
+```
+
+
+Also, export the `AuthDto` in the `index.ts` file within the DTO directory:
+
+```typescript
+export * from './auth.dto';
+```
+
+This allows you to easily import the `AuthDto` from the `dto` directory in your Nest.js application.
+
+
+<details>
+<summary>Pipes in Nest.js</summary>
+
+### Pipes in Nest.js
+
+## What are Pipes in Nest.js?
+
+Pipes in Nest.js are classes that implement the `PipeTransform` interface. They serve two primary purposes: transformation and validation.
+
+### Transformation:
+Pipes are used to modify incoming data into a desired format. For example, they can parse strings into integers or perform other data transformations.
+
+### Validation:
+Pipes also play a role in data validation. They check incoming data and can throw exceptions if it doesn't meet specific criteria.
+
+### The Connection: Using Pipes with DTOs
+The relationship between DTOs (Data Transfer Objects) and Pipes in Nest.js is mainly centered around the validation and transformation of request data.
+
+#### Automated Validation:
+When a client sends data, such as in a POST request, DTOs define the expected data structure. Pipes can automatically validate this data against the DTO's structure and constraints before it reaches the controller's handler method.
+
+**Example Workflow:**
+
+1. A client sends data to a Nest.js API endpoint.
+2. The data is received in a controller.
+3. Before handling it, a pipe validates (and potentially transforms) this data based on the DTO associated with the endpoint.
+
+#### Built-in Pipes:
+Nest.js provides built-in pipes like `ValidationPipe` that seamlessly work with DTOs and class-validator decorators to validate incoming data.
+
+**Example:**
+
+```javascript
+import { Controller, Post, Body, UsePipes, ValidationPipe } from '@nestjs/common';
+import { CreateItemDto } from './create-item.dto';
+
+@Controller('items')
+export class ItemsController {
+  @Post()
+  @UsePipes(new ValidationPipe())
+  async create(@Body() createItemDto: CreateItemDto) {
+    // create item logic...
+  }
+}
+
+```
+In this example:
+
+- CreateItemDto defines the structure for creating items.
+- ValidationPipe is used to automatically validate data sent to the create method against CreateItemDto.
+
+>For more information, you can refer to the [Nest.js documentation on validation](https://docs.nestjs.com/techniques/validation#stripping-properties).
+
+</details>
+
+### Using the built-in ValidationPipe#
+To get started with the `ValidationPipe`, you'll need to install the required dependencies first:
+
+```bash
+$ npm i --save class-validator class-transformer
+```
+Next, let's make some changes to your `auth.dto.ts` file to include validation decorators:
+
+```typescript
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+
+export class AuthDto {
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}
+```
+
+Now, let's integrate the `ValidationPipe` into your `main.ts` file to apply validation globally:
+
+
+```typescript
+ import { ValidationPipe } from '@nestjs/common';
+
+// ...
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  // Apply ValidationPipe globally
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+    }),
+  );
+
+  await app.listen(3000);
+}
+bootstrap();
+
+```
+
+> With these changes, your Nest.js application will use the `ValidationPipe` to automatically validate incoming data against the defined DTO structure. `The whitelist: true` option ensures that only properties with decorators are allowed, stripping any additional properties.
+
+
+</details>
+
+<details>
+<summary> 2.10 Hashing user password with argon</summary>
+
+### 2.10 Hashing user password with argon
+
+**Step 1**: Install the Argon2 library by running the following command:
+```bash
+npm i argon2
+```
+
+**Step 2**: Create the signup logic in your Nest.js AuthService. Here's the code:
+```typescript
+import { ForbiddenException, Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { AuthDto } from './dto';
+import * as argon2 from 'argon2';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+
+@Injectable()
+export class AuthService {
+  constructor(private prisma: PrismaService) {}
+
+  async signup(dto: AuthDto) {
+    try {
+      // Generate the password hash using Argon2
+      const hash = await argon2.hash(dto.password);
+
+      // Save the new user in the database
+      const user = await this.prisma.user.create({
+        data: {
+          email: dto.email,
+          hash,
+        },
+      });
+
+      // Remove the hash from the returned user object for security
+      delete user.hash;
+
+      // Return the saved user
+      return user;
+    } catch (error) {
+      // Handle any errors, including duplicate credentials
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          throw new ForbiddenException('Credentials already taken');
+        }
+      }
+      throw error;
+    }
+  }
+}
+
+```
+This code demonstrates how to securely hash user passwords using Argon2 and handle exceptions, such as duplicate credentials. The argon2.hash function is used to hash the user's password before storing it in the database.
+
+By following these steps, you can ensure that user passwords are stored securely in your Nest.js application.
+
+
 </details>
